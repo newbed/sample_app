@@ -1,6 +1,10 @@
 require 'rubygems'
 require 'spork'
 
+#http://stackoverflow.com/questions/1160004/setup-factory-girl-with-testunit-and-shoulda
+require 'factory_girl'      # 2011-03-28 Added by Dave
+Factory.find_definitions    # 
+
 Spork.prefork do
   # Loading more in this block will cause your tests to run faster. However,
   # if you change any configuration or code from libraries loaded here, you'll

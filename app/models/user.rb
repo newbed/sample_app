@@ -1,17 +1,19 @@
 # == Schema Information
-# Schema version: 20110324105519
+# Schema version: 20110327151847
 #
 # Table name: users
 #
-#  id         :integer         not null, primary key
-#  name       :string(255)
-#  email      :string(255)
-#  created_at :datetime
-#  updated_at :datetime
+#  id                 :integer         not null, primary key
+#  name               :string(255)
+#  email              :string(255)
+#  created_at         :datetime
+#  updated_at         :datetime
+#  encrypted_password :string(255)
 #
 
 class User < ActiveRecord::Base
-  attr_accessible :name, :email
+  attr_accessor   :password
+  attr_accessible :name, :email, :password, :password_confirmation
   
   email_regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
   
@@ -20,4 +22,41 @@ class User < ActiveRecord::Base
   validates :email, :presence   => true,
                     :format     => { :with => email_regex },
                     :uniqueness => { :case_sensitive => false}
+  validates :password, :presence => true,
+                       :confirmation => true,
+                       :length => { :within => 6..40 }
+                       
+  before_save :encrypt_password
+  
+  def has_password?(submitted_password)
+    encrypted_password == encrypt(submitted_password)
+  end
+  
+  class << self
+    def User.authenticate(email, submitted_password) # User. self. optional if in this "class << self" block
+      user = User.find_by_email(email) # User. optional in here
+      return nil if user.nil?
+      return user if user.has_password?(submitted_password)
+    end
+  end  
+  
+  private
+  
+  def encrypt_password
+    self.salt = make_salt if self.new_record? # 2nd self optional
+    self.encrypted_password = encrypt(self.password) # self is optional
+  end
+  
+  def encrypt(string)
+    secure_hash("#{self.salt}--#{string}") # self can be implicit... same as above
+  end
+  
+  def secure_hash(string)
+    Digest::SHA2.hexdigest(string)
+  end
+  
+  def make_salt
+    secure_hash("#{Time.now.utc}--#{password}")
+  end
+  
 end

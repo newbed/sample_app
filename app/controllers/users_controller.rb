@@ -15,6 +15,7 @@ class UsersController < ApplicationController
     # raise params[:user].inspect
     @user = User.new(params[:user])
     if @user.save
+      sign_in @user
              # or user_path(@user)
       redirect_to @user, :flash => { :success => "Welcome to the Sample App!"}
     else

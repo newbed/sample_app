@@ -12,7 +12,8 @@ class SessionsController < ApplicationController
       render 'new'
       # indicate some error messabge
     else
-      # handle successful signin
+      sign_in user
+      redirect_to user #  user_path(user)
     end
   end
 

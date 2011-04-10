@@ -13,7 +13,7 @@ class SessionsController < ApplicationController
       # indicate some error messabge
     else
       sign_in user
-      redirect_to user #  user_path(user)
+      redirect_back_or user #  user_path(user)
     end
   end
 

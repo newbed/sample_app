@@ -1,0 +1,15 @@
+<h1>Edit user</h1>
+
+<%= form_for(@user) do |f| %>
+<!-- interesting.. symbol matches what's inside the partial -->
+  <%= render 'fields', :f => f %>  
+  <div class="actions">
+    <%= f.submit "Update" %><br>
+  </div>
+  
+  <div>
+    <%= gravatar_for @user %>
+    <a href="http://gravatar.com/emails" target=_blank>change</a>
+  </div>
+  
+<% end %>
